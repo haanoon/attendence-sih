@@ -20,6 +20,32 @@ const classes: ClassInfo[] = [
   { id: "alg301", name: "Algorithms", time: "02:00 PM", instructor: "Dr. Lisa Chen", mode: "offline" },
 ];
 
+const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const;
+
+type DayKey = typeof weekDays[number];
+
+type ScheduledItem = { time: string; classId: string; room?: string; mode: "offline" | "online" };
+
+const studentSchedule: Record<DayKey, ScheduledItem[]> = {
+  Mon: [
+    { time: "09:00", classId: "cs101", room: "Eng. Building - 204", mode: "offline" },
+    { time: "11:00", classId: "ds201", room: "Online", mode: "online" },
+  ],
+  Tue: [
+    { time: "14:00", classId: "alg301", room: "Science - 105", mode: "offline" },
+  ],
+  Wed: [
+    { time: "09:00", classId: "cs101", room: "Eng. Building - 204", mode: "offline" },
+    { time: "11:00", classId: "ds201", room: "Online", mode: "online" },
+  ],
+  Thu: [
+    { time: "14:00", classId: "alg301", room: "Science - 105", mode: "offline" },
+  ],
+  Fri: [
+    { time: "09:00", classId: "cs101", room: "Eng. Building - 204", mode: "offline" },
+  ],
+};
+
 function useAuth() {
   const navigate = useNavigate();
   const [role, setRole] = useState<Role | null>(null);
@@ -91,6 +117,7 @@ function StudentPortal({ onSignOut }: { onSignOut: () => void }) {
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="timetable">Timetable</TabsTrigger>
             <TabsTrigger value="mark">Mark Attendance</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
@@ -123,6 +150,10 @@ function StudentPortal({ onSignOut }: { onSignOut: () => void }) {
             </Card>
           </TabsContent>
 
+          <TabsContent value="timetable" className="mt-4">
+            <WeeklyTimetable />
+          </TabsContent>
+
           <TabsContent value="mark" className="mt-4">
             <StudentMarkAttendance />
           </TabsContent>
@@ -149,6 +180,39 @@ function StudentPortal({ onSignOut }: { onSignOut: () => void }) {
         </Tabs>
       </main>
     </div>
+  );
+}
+
+function WeeklyTimetable() {
+  const getClass = (id: string) => classes.find((c) => c.id === id)!;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Weekly Timetable</CardTitle>
+        <CardDescription>Overview of classes for the week</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-5">
+          {weekDays.map((d) => (
+            <div key={d} className="rounded-lg border p-3">
+              <div className="mb-2 font-medium">{d}</div>
+              <div className="space-y-2">
+                {studentSchedule[d].length === 0 && (
+                  <div className="text-xs text-muted-foreground">No classes</div>
+                )}
+                {studentSchedule[d].map((it, idx) => (
+                  <div key={d + idx} className="rounded-md border px-3 py-2">
+                    <div className="text-xs text-muted-foreground">{it.time}</div>
+                    <div className="text-sm">{getClass(it.classId).name}</div>
+                    <div className="text-xs text-muted-foreground">{it.mode === "online" ? "online" : it.room}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -242,6 +306,8 @@ function FacultyPortal({ onSignOut }: { onSignOut: () => void }) {
                 ))}
               </CardContent>
             </Card>
+
+            <FacultyWeeklyPlan />
           </TabsContent>
 
           <TabsContent value="start" className="mt-4">
@@ -260,6 +326,41 @@ function FacultyPortal({ onSignOut }: { onSignOut: () => void }) {
         </Tabs>
       </main>
     </div>
+  );
+}
+
+function FacultyWeeklyPlan() {
+  const getClass = (id: string) => classes.find((c) => c.id === id)!;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">This Week's Classes to Cover</CardTitle>
+        <CardDescription>Plan for upcoming sessions</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-5">
+          {weekDays.map((d) => (
+            <div key={d} className="rounded-lg border p-3">
+              <div className="mb-2 font-medium">{d}</div>
+              <div className="space-y-2">
+                {studentSchedule[d].map((it, idx) => (
+                  <div key={d + idx} className="flex items-center justify-between rounded-md border px-3 py-2">
+                    <div>
+                      <div className="text-sm">{getClass(it.classId).name}</div>
+                      <div className="text-xs text-muted-foreground">{it.time} • {it.mode === "online" ? "online" : it.room}</div>
+                    </div>
+                    <Button size="sm" variant="secondary">Prepare</Button>
+                  </div>
+                ))}
+                {studentSchedule[d].length === 0 && (
+                  <div className="text-xs text-muted-foreground">No classes</div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
