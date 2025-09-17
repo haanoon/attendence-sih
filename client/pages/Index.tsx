@@ -24,16 +24,15 @@ export default function Index() {
   const signIn = (e: React.FormEvent) => {
     e.preventDefault();
     const token = `${role}-${Date.now()}`;
-    localStorage.setItem(
-      "auth",
-      JSON.stringify({ token, role, email })
-    );
+    localStorage.setItem("auth", JSON.stringify({ token, role, email }));
     navigate("/portal");
   };
 
   const fillDemo = (kind: "student" | "faculty") => {
     setRole(kind);
-    setEmail(kind === "student" ? "student@university.edu" : "faculty@university.edu");
+    setEmail(
+      kind === "student" ? "student@university.edu" : "faculty@university.edu",
+    );
     setPassword(kind === "student" ? "student123" : "faculty123");
   };
 
@@ -44,8 +43,12 @@ export default function Index() {
           <div className="mx-auto mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <span className="text-lg">🎓</span>
           </div>
-          <h1 className="text-center text-2xl font-semibold">Attendance System</h1>
-          <p className="mt-1 text-center text-sm text-muted-foreground">Sign in to your account to continue</p>
+          <h1 className="text-center text-2xl font-semibold">
+            Attendance System
+          </h1>
+          <p className="mt-1 text-center text-sm text-muted-foreground">
+            Sign in to your account to continue
+          </p>
 
           <form onSubmit={signIn} className="mt-6 space-y-4">
             <div className="space-y-2">
@@ -80,17 +83,34 @@ export default function Index() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full h-11 text-base">Sign In</Button>
+            <Button type="submit" className="w-full h-11 text-base">
+              Sign In
+            </Button>
           </form>
 
           <div className="mt-6">
-            <div className="text-center text-xs text-muted-foreground">DEMO ACCOUNTS</div>
+            <div className="text-center text-xs text-muted-foreground">
+              DEMO ACCOUNTS
+            </div>
             <div className="mt-2 grid grid-cols-2 gap-3">
-              <Button type="button" variant="secondary" onClick={() => fillDemo("student")}>Student Demo</Button>
-              <Button type="button" variant="secondary" onClick={() => fillDemo("faculty")}>Faculty Demo</Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => fillDemo("student")}
+              >
+                Student Demo
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => fillDemo("faculty")}
+              >
+                Faculty Demo
+              </Button>
             </div>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Student: student@university.edu / student123<br/>
+              Student: student@university.edu / student123
+              <br />
               Faculty: faculty@university.edu / faculty123
             </p>
           </div>
