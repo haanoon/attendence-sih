@@ -343,7 +343,7 @@ function WeeklyTimetable() {
 
 function StudentMarkAttendance() {
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
-  const next = () => setStep((s) => Math.min(3, (s + 1) as any));
+  const next = () => setStep((s) => Math.min(3, s + 1) as 0 | 1 | 2 | 3);
 
   return (
     <Card>
