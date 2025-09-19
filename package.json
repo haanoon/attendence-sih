@@ -17,6 +17,10 @@
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
+    "test:db": "node test-database.mjs",
+    "db:init": "./database/init.sh",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"
   },
