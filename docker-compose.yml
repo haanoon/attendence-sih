@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: attendance_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: attendance_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d attendance_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: attendance_adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  postgres_data:
+    driver: local
